@@ -3,7 +3,7 @@ package com.taidt9.oderservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.taidt9")
 public class OderServiceApplication {
 
     public static void main(String[] args) {

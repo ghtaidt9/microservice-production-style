@@ -1,0 +1,29 @@
+groups:
+
+- name: ecommerce-alerts
+
+  rules:
+
+  - alert: ServiceDown
+    expr: up == 0
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Service is DOWN"
+
+  - alert: HighErrorRate
+    expr: rate(http_server_requests_seconds_count{status="500"}[1m]) > 5
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High error rate detected"
+
+  - alert: OrderSpike
+    expr: rate(orders_created_total[1m]) > 100
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Order creation spike"

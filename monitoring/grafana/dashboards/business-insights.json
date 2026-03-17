@@ -1,0 +1,41 @@
+{
+  "title": "Business Insights",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Orders per minute",
+      "targets": [
+        {
+          "expr": "rate(orders_total[1m]) * 60"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Order Trend",
+      "targets": [
+        {
+          "expr": "rate(orders_total[5m])"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Inventory Usage Rate",
+      "targets": [
+        {
+          "expr": "rate(inventory_deducted_total[1m])"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Inventory Trend",
+      "targets": [
+        {
+          "expr": "rate(inventory_deducted_total[5m])"
+        }
+      ]
+    }
+  ]
+}

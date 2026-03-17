@@ -1,0 +1,42 @@
+{
+  "title": "Debug Dashboard",
+  "templating": {
+    "list": [
+      {
+        "name": "instance",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(up, instance)"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "graph",
+      "title": "JVM Memory",
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{instance=\"$instance\"}"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Threads",
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads{instance=\"$instance\"}"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "GC Time",
+      "targets": [
+        {
+          "expr": "jvm_gc_pause_seconds_sum"
+        }
+      ]
+    }
+  ]
+}

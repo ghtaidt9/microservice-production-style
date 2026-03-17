@@ -1,6 +1,7 @@
 package com.taidt9.inventoryservice.listener;
 
 import com.taidt9.OrderEvent;
+import com.taidt9.inventoryservice.metrics.InventoryMetrics;
 import com.taidt9.inventoryservice.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class InventoryListener {
 
     private final InventoryService inventoryService;
+    private final InventoryMetrics eInventoryMetrics;
 
     @KafkaListener(
             topics = "order-topic",
@@ -23,5 +25,6 @@ public class InventoryListener {
                 event.getProductId(),
                 event.getQuantity()
         );
+        eInventoryMetrics.increment();
     }
 }
