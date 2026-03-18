@@ -4,9 +4,11 @@ import com.taidt9.OrderEvent;
 import com.taidt9.inventoryservice.metrics.InventoryMetrics;
 import com.taidt9.inventoryservice.service.InventoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InventoryListener {
@@ -20,6 +22,7 @@ public class InventoryListener {
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void consume(OrderEvent event) {
+        log.info("receive message");
 
         inventoryService.deductStock(
                 event.getProductId(),

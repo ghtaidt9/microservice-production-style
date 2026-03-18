@@ -2,16 +2,20 @@ package com.taidt9.productservice.exception;
 
 import com.taidt9.productservice.api.ApiError;
 import com.taidt9.productservice.api.ApiResponse;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -63,6 +67,8 @@ public class GlobalExceptionHandler {
                 .code("INTERNAL_SERVER_ERROR")
                 .message("Unexpected error occurred")
                 .build();
+
+        log.error("Exception caught in Product Service: {}", ex.getMessage(), ex);
 
         ApiResponse<Object> response = ApiResponse.builder()
                 .success(false)

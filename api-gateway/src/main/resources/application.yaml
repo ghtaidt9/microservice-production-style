@@ -1,12 +1,10 @@
 server:
   port: 8080
-
 spring:
   application:
     name: api-gateway
   main:
     web-application-type: reactive
-
   cloud:
     gateway:
       server:
@@ -31,31 +29,30 @@ spring:
               uri: lb://INVENTORY-SERVICE
               predicates:
                 - Path=/api/inventory/**
-
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8888/eureka/
-
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: health,info
 management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:
         include: health,info,prometheus
-
   endpoint:
     health:
       show-details: always
-
   prometheus:
     metrics:
       export:
         enabled: true
-
+logging:
+  level:
+    p6spy: debug
+  pattern:
+    level: "%5p [${spring.application.name},traceId=%X{traceId},spanId=%X{spanId}]"
 jwt:
   secret: mysecretkeymysecretkeymysecretkey

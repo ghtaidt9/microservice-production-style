@@ -17,7 +17,6 @@ public class ProductService {
 
     @Cacheable(value = "products", key = "#id")
     public Product getById(Long id) {
-        System.out.println("Fetching from DB...");
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }

@@ -18,8 +18,6 @@ public class OrderMetrics {
     }
 
     public void incrementOrders() {
-        System.out.println(this.orderCreated.count());
         this.orderCreated.increment();
-        System.out.println(this.orderCreated.count());
     }
 }

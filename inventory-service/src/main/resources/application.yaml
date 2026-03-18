@@ -1,19 +1,17 @@
 server:
   port: 8084
-
 spring:
   application:
     name: inventory-service
-
   datasource:
-    url: jdbc:mysql://localhost:3306/inventory_db
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://localhost:3306/inventory_db
     username: root
     password: root
-
   jpa:
     hibernate:
       ddl-auto: update
-
+    show-sql: false
   Kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -22,7 +20,6 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: com.taidt9
-
 eureka:
   client:
     service-url:
@@ -32,17 +29,19 @@ management:
     web:
       exposure:
         include: health,info,prometheus
-
   endpoint:
     health:
       show-details: always
-
   prometheus:
     metrics:
       export:
         enabled: true
   metrics:
     distribution:
-
       percentiles-histogram:
         http.server.requests: true
+logging:
+  level:
+    com.p6spy: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},traceId=%X{traceId},spanId=%X{spanId}]"

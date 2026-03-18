@@ -21,3 +21,8 @@ management:
     metrics:
       export:
         enabled: true
+logging:
+  level:
+    p6spy: debug
+  pattern:
+    level: "%5p [${spring.application.name}]"
