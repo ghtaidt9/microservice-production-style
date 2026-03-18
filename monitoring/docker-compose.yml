@@ -22,3 +22,9 @@ services:
 
       # provisioning configs
       - ./grafana/provisioning:/etc/grafana/provisioning
+  jaeger:
+    image: jaegertracing/all-in-one:1.51
+    container_name: jaeger
+    ports:
+      - "16686:16686"   # UI
+      - "4318:4318"     # OTLP HTTP

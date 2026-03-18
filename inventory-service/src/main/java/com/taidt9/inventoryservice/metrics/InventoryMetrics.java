@@ -17,9 +17,6 @@ public class InventoryMetrics {
     }
 
     public void increment() {
-        System.out.println(inventoryDeducted.count());
         this.inventoryDeducted.increment();
-        System.out.println(inventoryDeducted.count());
-
     }
 }

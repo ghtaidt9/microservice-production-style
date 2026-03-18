@@ -27,7 +27,6 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ApiResponse<ProductResponse> get(@PathVariable Long id, @RequestHeader("X-User-Name") String username) {
-        System.out.println(username);
         Product product = service.getById(id);
         ProductResponse productResponse = ProductResponse.builder().id(product.getId()).name(product.getName()).price(product.getPrice()).build();
         return ApiResponse.<ProductResponse>builder().success(true).data(productResponse).timestamp(LocalDateTime.now()).build();
