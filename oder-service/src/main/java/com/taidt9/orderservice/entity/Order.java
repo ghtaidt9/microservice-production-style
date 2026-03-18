@@ -1,4 +1,4 @@
-package com.taidt9.oderservice.entity;
+package com.taidt9.orderservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

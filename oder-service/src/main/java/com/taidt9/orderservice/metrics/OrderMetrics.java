@@ -1,4 +1,4 @@
-package com.taidt9.oderservice.metrics;
+package com.taidt9.orderservice.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;

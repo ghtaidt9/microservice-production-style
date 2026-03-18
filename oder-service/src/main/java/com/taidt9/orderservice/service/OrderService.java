@@ -1,9 +1,9 @@
-package com.taidt9.oderservice.service;
+package com.taidt9.orderservice.service;
 
 import com.taidt9.OrderEvent;
-import com.taidt9.oderservice.OrderRepository;
-import com.taidt9.oderservice.entity.Order;
-import com.taidt9.oderservice.metrics.OrderMetrics;
+import com.taidt9.orderservice.OrderRepository;
+import com.taidt9.orderservice.entity.Order;
+import com.taidt9.orderservice.metrics.OrderMetrics;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
