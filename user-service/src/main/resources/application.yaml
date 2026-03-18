@@ -4,13 +4,14 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:mysql://localhost:3306/user_db
+    url: jdbc:p6spy:mysql://localhost:3306/user_db
     username: root
     password: root
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
   data:
     redis:
       host: localhost
@@ -23,16 +24,39 @@ jwt:
   secret: mysecretkeymysecretkeymysecretkey
   expiration: 3600000
 management:
+  tracing:
+    sampling:
+      probability: 1.0   # dev: trace 100%
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
-
+        include: health,info, metrics, prometheus
   endpoint:
     health:
       show-details: always
-
   prometheus:
     metrics:
       export:
         enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+logging:
+  level:
+    root: INFO
+    com.p6spy: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+  pattern:
+    level: "%5p [${spring.application.name:},traceId=%X{traceId},spanId=%X{spanId}]"
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      multiline: false
+      logging: slf4j

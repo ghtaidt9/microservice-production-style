@@ -1,4 +1,4 @@
-package com.taidt9.oderservice;
+package com.taidt9.orderservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

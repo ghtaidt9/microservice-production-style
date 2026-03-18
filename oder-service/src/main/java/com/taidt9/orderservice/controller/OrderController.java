@@ -1,7 +1,7 @@
-package com.taidt9.oderservice.controller;
+package com.taidt9.orderservice.controller;
 
-import com.taidt9.oderservice.entity.Order;
-import com.taidt9.oderservice.service.OrderService;
+import com.taidt9.orderservice.entity.Order;
+import com.taidt9.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.taidt9.oderservice;
+package com.taidt9.orderservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

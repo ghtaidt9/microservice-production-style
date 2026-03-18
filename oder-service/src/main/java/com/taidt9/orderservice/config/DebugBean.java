@@ -1,4 +1,4 @@
-package com.taidt9.oderservice.config;
+package com.taidt9.orderservice.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;

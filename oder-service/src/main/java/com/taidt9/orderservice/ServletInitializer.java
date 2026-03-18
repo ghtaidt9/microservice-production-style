@@ -1,4 +1,4 @@
-package com.taidt9.oderservice;
+package com.taidt9.orderservice;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

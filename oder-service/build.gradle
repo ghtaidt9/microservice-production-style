@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.taidt9'
 version = '0.0.1-SNAPSHOT'
-description = 'oder-service'
+description = 'order-service'
 
 java {
     toolchain {
@@ -26,6 +26,8 @@ repositories {
 
 dependencies {
     implementation 'com.taidt9:common-events:1.0.0'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-web'
