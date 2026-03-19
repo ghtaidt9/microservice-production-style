@@ -24,6 +24,10 @@ jwt:
   secret: mysecretkeymysecretkeymysecretkey
   expiration: 3600000
 management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:
@@ -36,6 +40,11 @@ management:
     metrics:
       export:
         enabled: true
+otel:
+  traces:
+    exporter: otlp
+    otlp:
+      endpoint: http://localhost:4317
 logging:
   level:
     com.p6spy: debug
