@@ -26,12 +26,16 @@ jwt:
 management:
   tracing:
     enabled: true
+    exporter:
+      otlp:
+        enabled: true
+        endpoint: http://collector:4318/v1/traces
     sampling:
       probability: 1.0
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus,jaeger,otlp
   endpoint:
     health:
       show-details: always
@@ -40,13 +44,11 @@ management:
     metrics:
       export:
         enabled: true
-otel:
-  traces:
-    exporter: otlp
-    otlp:
-      endpoint: http://localhost:4317
 logging:
   level:
     com.p6spy: debug
   pattern:
     level: "%5p [${spring.application.name},traceId=%X{traceId},spanId=%X{spanId}]"
+monitoring:
+  prometheus:
+    api-key: prometheus-secret

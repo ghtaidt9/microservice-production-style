@@ -36,6 +36,10 @@ eureka:
 management:
   tracing:
     enabled: true
+    exporter:
+      otlp:
+        enabled: true
+        endpoint: http://collector:4318/v1/traces
     sampling:
       probability: 1.0
   endpoints:
@@ -51,7 +55,7 @@ management:
         enabled: true
 logging:
   level:
-    p6spy: debug
+    com.p6spy: DEBUG
   pattern:
     level: "%5p [${spring.application.name},traceId=%X{traceId},spanId=%X{spanId}]"
 jwt:

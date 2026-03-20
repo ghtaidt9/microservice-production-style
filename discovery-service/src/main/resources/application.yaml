@@ -10,6 +10,14 @@ eureka:
     service-url:
       defaultZone: http://localhost:8888/eureka
 management:
+  tracing:
+    enabled: true
+    exporter:
+      otlp:
+        enabled: true
+        endpoint: http://collector:4318/v1/traces
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:

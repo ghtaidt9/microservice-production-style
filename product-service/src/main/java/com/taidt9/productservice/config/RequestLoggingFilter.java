@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -19,16 +18,11 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/actuator")
-                || path.startsWith("/favicon")
-                || path.startsWith("/swagger");
+        return path.startsWith("/actuator") || path.startsWith("/favicon") || path.startsWith("/swagger");
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         long start = System.currentTimeMillis();
         Exception exceptionCaught = null;
@@ -44,8 +38,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         }
     }
 
-    private void logRequest(HttpServletRequest request, HttpServletResponse response,
-                            long duration, Exception exception) {
+    private void logRequest(HttpServletRequest request, HttpServletResponse response, long duration, Exception exception) {
 
         int status = response.getStatus();
         String method = request.getMethod();
@@ -55,18 +48,14 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 
         if (status >= 500) {
             if (exception != null) {
-                log.error("method={} path={} userId={} status={} duration_ms={} ip={} error={}",
-                        method, path, userId, status, duration, ip, exception.getMessage(), exception);
+                log.error("method={} path={} userId={} status={} duration_ms={} ip={} error={}", method, path, userId, status, duration, ip, exception.getMessage(), exception);
             } else {
-                log.error("method={} path={} userId={} status={} duration_ms={} ip={}",
-                        method, path, userId, status, duration, ip);
+                log.error("method={} path={} userId={} status={} duration_ms={} ip={}", method, path, userId, status, duration, ip);
             }
         } else if (status >= 400) {
-            log.warn("method={} path={} userId={} status={} duration_ms={} ip={}",
-                    method, path, userId, status, duration, ip);
+            log.warn("method={} path={} userId={} status={} duration_ms={} ip={}", method, path, userId, status, duration, ip);
         } else {
-            log.info("method={} path={} userId={} status={} duration_ms={} ip={}",
-                    method, path, userId, status, duration, ip);
+            log.info("method={} path={} userId={} status={} duration_ms={} ip={}", method, path, userId, status, duration, ip);
         }
     }
 
@@ -76,7 +65,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             if (auth != null && auth.isAuthenticated()) {
                 return auth.getName();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return "anonymous";
     }
 

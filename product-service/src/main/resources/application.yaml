@@ -24,13 +24,21 @@ eureka:
     service-url:
       defaultZone: http://localhost:8888/eureka
 management:
+  tracing:
+    enabled: true
+    exporter:
+      otlp:
+        enabled: true
+        endpoint: http://collector:4318/v1/traces
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus,metrics, traces
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
   prometheus:
     metrics:
       export:
@@ -42,3 +50,6 @@ management:
 logging:
   level:
     com.p6spy.engine.spy: DEBUG
+monitoring:
+  prometheus:
+    api-key: prometheus-secret
