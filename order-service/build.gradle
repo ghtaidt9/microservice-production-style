@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.taidt9:common-events:1.0.0'
+    implementation 'com.taidt9:common-events:1.1.0'
     implementation 'p6spy:p6spy:3.9.1'
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
@@ -36,6 +36,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.0.2'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
     compileOnly 'org.projectlombok:lombok'

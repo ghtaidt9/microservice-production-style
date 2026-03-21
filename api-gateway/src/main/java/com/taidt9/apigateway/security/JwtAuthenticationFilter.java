@@ -15,17 +15,19 @@ import reactor.core.publisher.Mono;
 public class JwtAuthenticationFilter implements GlobalFilter {
 
     private final JwtUtil jwtUtil;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         String path = exchange.getRequest().getURI().getPath();
-        if(path.startsWith("/auth")) {
-            return chain.filter(exchange);
+        if (path.startsWith("/auth")) {
+            ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("X-INTERNAL-REQUEST", "true").build();
+
+            ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+            exchange.getRequest().mutate().header("X-INTERNAL-REQUEST", "true").build();
+            return chain.filter(mutatedExchange);
         }
-        String header = exchange
-                .getRequest()
-                .getHeaders()
-                .getFirst(HttpHeaders.AUTHORIZATION);
+        String header = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (header == null || !header.startsWith("Bearer ")) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
@@ -39,16 +41,9 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
         String userName = jwtUtil.extractUsername(token);
 
-        ServerHttpRequest mutatedRequest =
-                exchange.getRequest()
-                        .mutate()
-                        .header("X-User-Name", userName)
-                        .build();
+        ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("X-User-Name", userName).header("X-INTERNAL-REQUEST", "true").build();
 
-        ServerWebExchange mutatedExchange =
-                exchange.mutate()
-                        .request(mutatedRequest)
-                        .build();
+        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
 
         return chain.filter(mutatedExchange);
     }

@@ -3,3 +3,8 @@ monitoring/grafana/dashboards/debug-dashboard.json
 monitoring/grafana/dashboards/golden-signals.json
 monitoring/grafana/provisioning/dashboards/dashboards.yaml
 monitoring/grafana/provisioning/datasources/datasource.yml
+monitoring/grafana/dashboards/business-insights.json
+monitoring/grafana/dashboards/debug-dashboard.json
+monitoring/grafana/dashboards/golden-signals.json
+monitoring/grafana/provisioning/dashboards/dashboards.yaml
+monitoring/grafana/provisioning/datasources/datasource.yml
