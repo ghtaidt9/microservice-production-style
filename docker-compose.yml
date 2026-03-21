@@ -17,6 +17,14 @@ services:
       #- db_data:/var/lib/mysql
       #- mysql_data:/var/lib/mysql
 
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - SERVICES=sqs
+      - DEFAULT_REGION=us-east-1
+    ports:
+      - "4566:4566"
+
   redis:
     image: redis:7
     container_name: redis

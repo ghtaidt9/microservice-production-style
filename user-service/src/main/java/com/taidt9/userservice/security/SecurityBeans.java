@@ -1,4 +1,4 @@
-package com.taidt9.userservice.config;
+package com.taidt9.userservice.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

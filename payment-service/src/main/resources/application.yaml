@@ -1,13 +1,13 @@
 server:
-  port: 8083
+  port: 8085
 spring:
   application:
-    name: order-service
+    name: payment-service
   kafka:
     bootstrap-servers: localhost:9092
+    topic:
+      paymentResults: payment-results
     consumer:
-      group-id: order-service-group
-      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
@@ -16,6 +16,9 @@ spring:
     properties:
       spring.json.value.default.type: com.taidt9.PaymentResultEvent
       spring.json.trusted.packages: "com.taidt9"
+  redis:
+    host: localhost
+    port: 6379
   cloud:
     aws:
       sqs:
@@ -23,21 +26,11 @@ spring:
       region:
         static: us-east-1
       queue:
-        paymentRequests: ${SQS_PAYMENT_QUEUE:payment-service-requests}
-        paymentDlq: ${SQS_PAYMENT_DLQ:payment-service-requests-dlq}
+        paymentRequests: ${spring.application.name}-requests
+        paymentDlq: ${spring.application.name}-requests-dlq
       credentials:
         access-key: test
         secret-key: test
-  datasource:
-    url: jdbc:p6spy:mysql://localhost:3306/order_db
-    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-    username: root
-    password: root
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
 eureka:
   client:
     service-url:
@@ -48,7 +41,7 @@ management:
     exporter:
       otlp:
         enabled: true
-        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+        endpoint: http://collector:4318/v1/traces
     sampling:
       probability: 1.0
   endpoints:
@@ -58,14 +51,16 @@ management:
   endpoint:
     health:
       show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
   metrics:
     distribution:
       percentiles-histogram:
         http.server.requests: true
-
 logging:
   level:
-    org.springframework.kafka: INFO
     com.p6spy: DEBUG
   pattern:
     level: "%5p [${spring.application.name},traceId=%X{traceId},spanId=%X{spanId}]"
