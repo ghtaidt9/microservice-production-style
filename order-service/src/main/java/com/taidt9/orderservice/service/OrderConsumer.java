@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class PaymentConsumer {
+public class OrderConsumer {
 
     private final OrderService orderService;
 
-    @KafkaListener(topics = "payment-results", groupId = "order-service",
-            containerFactory = "paymentResultKafkaListenerContainerFactory")
+    @KafkaListener(topics = "payment-results", containerFactory = "paymentResultKafkaListenerContainerFactory")
     public void consume(PaymentResultEvent event) {
         log.info("Received PaymentResultEvent: {}", "PaymentResultEvent");
     }
