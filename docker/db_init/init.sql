@@ -3,6 +3,7 @@ CREATE DATABASE IF NOT EXISTS `user_db`;
 CREATE DATABASE IF NOT EXISTS `product_db`;
 CREATE DATABASE IF NOT EXISTS `order_db`;
 CREATE DATABASE IF NOT EXISTS `inventory_db`;
+CREATE DATABASE IF NOT EXISTS `analytics_db`;
 
 -- Optional: Create specific users and grant privileges
 -- CREATE USER 'user_one'@'%' IDENTIFIED BY 'password_one';

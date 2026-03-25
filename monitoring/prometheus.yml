@@ -50,14 +50,21 @@ scrape_configs:
   - job_name: 'payment-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['host.docker.internal:8885']
+      - targets: ['host.docker.internal:8085']
     authorization:
       type: Bearer
       credentials: prometheus-secret
   - job_name: 'notification-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['host.docker.internal:8886']
+      - targets: ['host.docker.internal:8086']
+    authorization:
+      type: Bearer
+      credentials: prometheus-secret
+  - job_name: 'analytics-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8087']
     authorization:
       type: Bearer
       credentials: prometheus-secret
