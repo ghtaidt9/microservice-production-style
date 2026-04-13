@@ -1,53 +1,78 @@
-version: '4.64.0'
+# ========================
+# NETWORK
+# ========================
+networks:
+  taidt9-network:
+
+# ========================
+# VOLUMES
+# ========================
+volumes:
+  mysql_user_data:
+  mysql_product_data:
+  mysql_order_data:
+  mysql_analytics_data:
+  mysql_inventory_data:
+  redis_data:
+  kafka_data:
+  nexus_data:
 
 services:
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: nexus
     ports:
-      - "3306:3306"
+      - "8081:8081"
     volumes:
-      # Mount the local directory to the container's init directory
-      - ./docker/db_init:/docker-entrypoint-initdb.d
-      # Optional: Persist actual database data in a named volume
-      #- db_data:/var/lib/mysql
-      #- mysql_data:/var/lib/mysql
-
-  localstack:
-    image: localstack/localstack:latest
-    environment:
-      - SERVICES=sqs,sns
-      - DEFAULT_REGION=us-east-1
-    ports:
-      - "4566:4566"
-
-  redis:
-    image: redis:7
-    container_name: redis
+      - nexus_data:/nexus-data
+    networks:
+      - taidt9-network
     restart: always
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/service/rest/v1/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
 
+  common-events-publisher:
+    image: gradle:8.5-jdk17
+    container_name: common-events-publisher
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    depends_on:
+      - nexus
+    environment:
+      - NEXUS_USERNAME=${NEXUS_USERNAME}
+      - NEXUS_PASSWORD=${NEXUS_PASSWORD}
+      - ORG_GRADLE_PROJECT_nexusUsername=${NEXUS_USERNAME}
+      - ORG_GRADLE_PROJECT_nexusPassword=${NEXUS_PASSWORD}
+      - ORG_GRADLE_PROJECT_nexusRepoUrl=http://nexus:8081/repository/maven-snapshots/
+    networks:
+      - taidt9-network
+    command: sh -c "until curl -sSf http://nexus:8081/service/rest/v1/status; do echo 'waiting for nexus'; sleep 5; done; gradle -p common-events publish"
+    restart: "no"
+
+  # ========================
+  # ZOOKEEPER
+  # ========================
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
-    restart: always
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - taidt9-network
 
+  # ========================
+  # KAFKA
+  # ========================
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
-    restart: always
     depends_on:
       - zookeeper
     ports:
@@ -55,13 +80,382 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    volumes:
-      - kafka_data:/var/lib/kafka/data
+    networks:
+      - taidt9-network
 
-volumes:
-  mysql_data:
-  redis_data:
-  kafka_data:
+  # ========================
+  # REDIS
+  # ========================
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - taidt9-network
+
+  # ========================
+  # MYSQL SERVICES
+  # ========================
+  user-mysql:
+    image: mysql:8
+    container_name: user-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user_db
+    volumes:
+      - mysql_user_data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - taidt9-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  product-mysql:
+    image: mysql:8
+    container_name: product-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: product_db
+    volumes:
+      - mysql_product_data:/var/lib/mysql
+    ports:
+      - "3309:3306"
+    networks:
+      - taidt9-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  order-mysql:
+    image: mysql:8
+    container_name: order-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: order_db
+    volumes:
+      - mysql_order_data:/var/lib/mysql
+    ports:
+      - "3310:3306"
+    networks:
+      - taidt9-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  analytics-mysql:
+    image: mysql:8
+    container_name: analytics-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: analytics_db
+    volumes:
+      - mysql_analytics_data:/var/lib/mysql
+    ports:
+      - "3311:3306"
+    networks:
+      - taidt9-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  inventory-mysql:
+    image: mysql:8
+    container_name: inventory-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: inventory_db
+    volumes:
+      - mysql_inventory_data:/var/lib/mysql
+    ports:
+      - "3312:3306"
+    networks:
+      - taidt9-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ========================
+  # DISCOVERY
+  # ========================
+  discovery-service:
+    build: ./discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ========================
+  # API GATEWAY
+  # ========================
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-service
+    environment:
+      - JAVA_TOOL_OPTIONS=-Dmanagement.tracing.exporter.otlp.protocol=grpc -Dmanagement.tracing.exporter.otlp.endpoint=http://jaeger:4317
+      # - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+
+  # ========================
+  # USER SERVICE
+  # ========================
+  # user-service:
+  #   build: ./user-service
+  #   container_name: user-service
+  #   depends_on:
+  #     user-mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_started
+  #     discovery-service:
+  #       condition: service_healthy
+  #   environment:
+  #     - MYSQL_USER=${MYSQL_USER}
+  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+
+  # # ========================
+  # # PRODUCT SERVICE
+  # # ========================
+  # product-service:
+  #   build: ./product-service
+  #   container_name: product-service
+  #   depends_on:
+  #     product-mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_started
+  #     discovery-service:
+  #       condition: service_healthy
+  #   environment:
+  #     - MYSQL_USER=${MYSQL_USER}
+  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # # ========================
+  # # ORDER SERVICE
+  # # ========================
+  # order-service:
+  #   build: ./order-service
+  #   container_name: order-service
+  #   depends_on:
+  #     common-events-publisher:
+  #       condition: service_completed_successfully
+  #     order-mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_started
+  #     discovery-service:
+  #       condition: service_healthy
+  #   environment:
+  #     - MYSQL_USER=${MYSQL_USER}
+  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # # ========================
+  # # INVENTORY SERVICE
+  # # ========================
+  # inventory-service:
+  #   build: ./inventory-service
+  #   container_name: inventory-service
+  #   depends_on:
+  #     common-events-publisher:
+  #       condition: service_completed_successfully
+  #     inventory-mysql:
+  #       condition: service_healthy
+  #     discovery-service:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_started
+  #   environment:
+  #     - MYSQL_USER=${MYSQL_USER}
+  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # # ========================
+  # # PAYMENT SERVICE
+  # # ========================
+  # payment-service:
+  #   build: ./payment-service
+  #   container_name: payment-service
+  #   depends_on:
+  #     common-events-publisher:
+  #       condition: service_completed_successfully
+  #     discovery-service:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_started
+  #   environment:
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # # ========================
+  # # NOTIFICATION SERVICE
+  # # ========================
+  # notification-service:
+  #   build: ./notification-service
+  #   container_name: notification-service
+  #   depends_on:
+  #     discovery-service:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_started
+  #   environment:
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # # ========================
+  # # ANALYTICS SERVICE
+  # # ========================
+  # analytics-service:
+  #   build: ./analytics-service
+  #   container_name: analytics-service
+  #   depends_on:
+  #     analytics-mysql:
+  #       condition: service_healthy
+  #     discovery-service:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_started
+  #   environment:
+  #     - MYSQL_USER=${MYSQL_USER}
+  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+  #   networks:
+  #     - taidt9-network
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 40s
+
+  # ========================
+  # PROMETHEUS
+  # ========================
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - taidt9-network
+
+  # ========================
+  # GRAFANA
+  # ========================
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    networks:
+      - taidt9-network
+    # ========================
+  # JAEGER (Distributed Tracing)
+  # ========================
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:    
+      - 4317:4317   # gRPC OTLP
+      - 4318:4318   # HTTP OTLP
+      - 16686:16686 # Jaeger UI
+
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - taidt9-network

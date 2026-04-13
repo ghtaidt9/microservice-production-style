@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.taidt9'
-version = '1.0.1'
+version = '1.1.1-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -34,7 +34,21 @@ publishing {
             from components.java
             groupId = 'com.taidt9'
             artifactId = 'common-events'
-            version = '1.1.0'
+            version = project.version
+        }
+    }
+    repositories {
+        maven {
+            name = 'nexus'
+            def nexusRepoUrl = findProperty('nexusRepoUrl') ?: System.getenv('NEXUS_REPO_URL')
+            def nexusSnapshotRepoUrl = findProperty('nexusSnapshotRepoUrl') ?: System.getenv('NEXUS_SNAPSHOT_REPO_URL')
+            def repoUrl = project.version.toString().endsWith('-SNAPSHOT') ? (nexusSnapshotRepoUrl ?: 'http://nexus:8081/repository/maven-snapshots/') : (nexusRepoUrl ?: 'http://nexus:8081/repository/maven-releases/')
+            url = uri(repoUrl)
+            credentials {
+                username = findProperty('nexusUsername') ?: System.getenv('NEXUS_USERNAME') ?: 'admin'
+                password = findProperty('nexusPassword') ?: System.getenv('NEXUS_PASSWORD') ?: 'admin123'
+            }
+            allowInsecureProtocol = true
         }
     }
 }

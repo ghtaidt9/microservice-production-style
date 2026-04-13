@@ -21,6 +21,14 @@ configurations {
 }
 
 repositories {
+	maven {
+		url = uri(findProperty('nexusRepoUrl') ?: System.getenv('NEXUS_REPO_URL') ?: 'http://host.docker.internal:8081/repository/maven-snapshots/')
+		credentials {
+			username = findProperty('nexusUsername') ?: System.getenv('NEXUS_USERNAME') ?: 'admin'
+			password = findProperty('nexusPassword') ?: System.getenv('NEXUS_PASSWORD') ?: 'admin123'
+		}
+		allowInsecureProtocol = true
+	}
 	mavenCentral()
 	mavenLocal()
 }
@@ -30,7 +38,7 @@ ext {
 }
 
 dependencies {
-	implementation 'com.taidt9:common-events:1.1.0'
+	implementation 'com.taidt9:common-events:1.1.1-SNAPSHOT'
 	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
 	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'

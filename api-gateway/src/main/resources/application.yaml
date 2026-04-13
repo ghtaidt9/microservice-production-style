@@ -42,20 +42,21 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8888/eureka/
+      defaultZone: http://discovery-service:8761/eureka/
 management:
   tracing:
     enabled: true
     exporter:
       otlp:
         enabled: true
-        endpoint: http://collector:4318/v1/traces
+        protocol: grpc
+        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://jaeger:4317}
     sampling:
       probability: 1.0
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus, jaeger, otlp
   endpoint:
     health:
       show-details: always
