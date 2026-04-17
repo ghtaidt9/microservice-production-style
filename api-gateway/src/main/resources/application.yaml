@@ -42,20 +42,19 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8888/eureka/
+      defaultZone: http://discovery-service:8761/eureka/
 management:
   tracing:
     enabled: true
     exporter:
       otlp:
         enabled: true
-        endpoint: http://collector:4318/v1/traces
     sampling:
       probability: 1.0
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus,metrics
   endpoint:
     health:
       show-details: always

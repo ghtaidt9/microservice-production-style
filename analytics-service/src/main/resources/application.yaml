@@ -1,20 +1,20 @@
 server:
-  port: 8087
+  port: 8080
 spring:
   application:
     name: analytics-service
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: analytics-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
   datasource:
-    url: jdbc:p6spy:mysql://localhost:3306/analytics_db
+    url: jdbc:p6spy:mysql://analytics-mysql:3306/analytics_db
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-    username: root
-    password: root
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
 
   jpa:
     hibernate:
@@ -23,14 +23,13 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8888/eureka
+      defaultZone: http://discovery-service:8761/eureka
 management:
   tracing:
     enabled: true
     exporter:
       otlp:
         enabled: true
-        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
     sampling:
       probability: 1.0
   endpoints:
