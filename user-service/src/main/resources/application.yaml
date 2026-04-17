@@ -29,17 +29,15 @@ management:
     exporter:
       otlp:
         enabled: true
-        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://jaeger:4318/v1/traces}
     sampling:
       probability: 1.0
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus,jaeger,otlp
+        include: health,info,prometheus,metrics
   endpoint:
     health:
       show-details: always
-
   prometheus:
     metrics:
       export:

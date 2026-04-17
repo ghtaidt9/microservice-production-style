@@ -7,8 +7,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OtlpConfig {
+    @Value("${OTEL_EXPORTER_OTLP_ENDPOINT:http://jaeger:4318/v1/traces}")
+    private String otlpEndpoint;
+
     @Bean
     OtlpHttpSpanExporter otlpHttpSpanExporter() {
-        return OtlpHttpSpanExporter.builder().build();
+        return OtlpHttpSpanExporter.builder().setEndpoint(otlpEndpoint).build();
     }
 }

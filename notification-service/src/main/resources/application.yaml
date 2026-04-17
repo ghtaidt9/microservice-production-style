@@ -27,7 +27,6 @@ management:
     exporter:
       otlp:
         enabled: true
-        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://jaeger:4318/v1/traces}
     sampling:
       probability: 1.0
   endpoints:

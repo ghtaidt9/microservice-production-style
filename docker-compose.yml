@@ -223,8 +223,7 @@ services:
     depends_on:
       - discovery-service
     environment:
-      - JAVA_TOOL_OPTIONS=-Dmanagement.tracing.exporter.otlp.protocol=grpc -Dmanagement.tracing.exporter.otlp.endpoint=http://jaeger:4317
-      # - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     networks:
       - taidt9-network
     restart: always
@@ -232,190 +231,190 @@ services:
   # ========================
   # USER SERVICE
   # ========================
-  # user-service:
-  #   build: ./user-service
-  #   container_name: user-service
-  #   depends_on:
-  #     user-mysql:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #     discovery-service:
-  #       condition: service_healthy
-  #   environment:
-  #     - MYSQL_USER=${MYSQL_USER}
-  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    depends_on:
+      user-mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
 
-  # # ========================
-  # # PRODUCT SERVICE
-  # # ========================
-  # product-service:
-  #   build: ./product-service
-  #   container_name: product-service
-  #   depends_on:
-  #     product-mysql:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #     discovery-service:
-  #       condition: service_healthy
-  #   environment:
-  #     - MYSQL_USER=${MYSQL_USER}
-  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  # ========================
+  # PRODUCT SERVICE
+  # ========================
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    depends_on:
+      product-mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # # ========================
-  # # ORDER SERVICE
-  # # ========================
-  # order-service:
-  #   build: ./order-service
-  #   container_name: order-service
-  #   depends_on:
-  #     common-events-publisher:
-  #       condition: service_completed_successfully
-  #     order-mysql:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #     discovery-service:
-  #       condition: service_healthy
-  #   environment:
-  #     - MYSQL_USER=${MYSQL_USER}
-  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  # ========================
+  # ORDER SERVICE
+  # ========================
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    depends_on:
+      common-events-publisher:
+        condition: service_completed_successfully
+      order-mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      discovery-service:
+        condition: service_healthy
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # # ========================
-  # # INVENTORY SERVICE
-  # # ========================
-  # inventory-service:
-  #   build: ./inventory-service
-  #   container_name: inventory-service
-  #   depends_on:
-  #     common-events-publisher:
-  #       condition: service_completed_successfully
-  #     inventory-mysql:
-  #       condition: service_healthy
-  #     discovery-service:
-  #       condition: service_healthy
-  #     kafka:
-  #       condition: service_started
-  #   environment:
-  #     - MYSQL_USER=${MYSQL_USER}
-  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  # ========================
+  # INVENTORY SERVICE
+  # ========================
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    depends_on:
+      common-events-publisher:
+        condition: service_completed_successfully
+      inventory-mysql:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # # ========================
-  # # PAYMENT SERVICE
-  # # ========================
-  # payment-service:
-  #   build: ./payment-service
-  #   container_name: payment-service
-  #   depends_on:
-  #     common-events-publisher:
-  #       condition: service_completed_successfully
-  #     discovery-service:
-  #       condition: service_healthy
-  #     kafka:
-  #       condition: service_started
-  #   environment:
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  # ========================
+  # PAYMENT SERVICE
+  # ========================
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    depends_on:
+      common-events-publisher:
+        condition: service_completed_successfully
+      discovery-service:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # # ========================
-  # # NOTIFICATION SERVICE
-  # # ========================
-  # notification-service:
-  #   build: ./notification-service
-  #   container_name: notification-service
-  #   depends_on:
-  #     discovery-service:
-  #       condition: service_healthy
-  #     kafka:
-  #       condition: service_started
-  #   environment:
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  # ========================
+  # NOTIFICATION SERVICE
+  # ========================
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # # ========================
-  # # ANALYTICS SERVICE
-  # # ========================
-  # analytics-service:
-  #   build: ./analytics-service
-  #   container_name: analytics-service
-  #   depends_on:
-  #     analytics-mysql:
-  #       condition: service_healthy
-  #     discovery-service:
-  #       condition: service_healthy
-  #     kafka:
-  #       condition: service_started
-  #   environment:
-  #     - MYSQL_USER=${MYSQL_USER}
-  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-  #   networks:
-  #     - taidt9-network
-  #   restart: always
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #     start_period: 40s
+  # ========================
+  # ANALYTICS SERVICE
+  # ========================
+  analytics-service:
+    build: ./analytics-service
+    container_name: analytics-service
+    depends_on:
+      analytics-mysql:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    networks:
+      - taidt9-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   # ========================
   # PROMETHEUS
