@@ -39,10 +39,14 @@ spec:
                 configMapKeyRef:
                   name: user-service-config
                   key: EUREKA_URL
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: EUREKA_INSTANCE_HOSTNAME
               value: "user-service"
             - name: EUREKA_INSTANCE_ID
-              value: "user-service"
+              value: "$(POD_NAME)"
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:

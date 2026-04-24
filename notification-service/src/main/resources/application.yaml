@@ -20,7 +20,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_URL:http://discovery-service:8761/eureka/}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:notification-service}
+    prefer-ip-address: false
+    instance-id: ${EUREKA_INSTANCE_ID:notification-service}
 management:
   tracing:
     enabled: true

@@ -20,22 +20,22 @@ spring:
             - Path=/api/products/**
 
         - id: order-service
-          uri: lb://ORDER-SERVICE
+          uri: ${ORDER_SERVICE_URL:http://order-service:8083}
           predicates:
             - Path=/api/orders/**
 
         - id: inventory-service
-          uri: lb://INVENTORY-SERVICE
+          uri: ${INVENTORY_SERVICE_URL:http://inventory-service:8086}
           predicates:
             - Path=/api/inventory/**
 
         - id: payment-service
-          uri: lb://PAYMENT-SERVICE
+          uri: ${PAYMENT_SERVICE_URL:http://payment-service:8084}
           predicates:
             - Path=/api/payment/**
 
         - id: analytics-service
-          uri: lb://ANALYTICS-SERVICE
+          uri: ${ANALYTICS_SERVICE_URL:http://analytics-service:8087}
           predicates:
             - Path=/api/analytics/**
 eureka:

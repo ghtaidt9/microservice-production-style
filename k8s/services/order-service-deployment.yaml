@@ -21,6 +21,16 @@ spec:
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: kafka:9092
+            - name: EUREKA_URL
+              value: "http://discovery-service:8761/eureka/"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: "order-service"
+            - name: EUREKA_INSTANCE_ID
+              value: "$(POD_NAME)"
 
 ---
 apiVersion: v1

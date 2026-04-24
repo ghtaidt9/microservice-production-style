@@ -41,7 +41,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_URL:http://discovery-service:8761/eureka/}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:order-service}
+    prefer-ip-address: false
+    instance-id: ${EUREKA_INSTANCE_ID:order-service}
 management:
   tracing:
     enabled: true
