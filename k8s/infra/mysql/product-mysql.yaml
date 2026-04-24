@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-mysql
+  template:
+    metadata:
+      labels:
+        app: product-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: product_db
+          livenessProbe:
+            exec:
+              command: ["mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-init
+              mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+        - name: mysql-data
+          emptyDir: {}
+        - name: mysql-init
+          configMap:
+            name: mysql-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-mysql
+spec:
+  selector:
+    app: product-mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
