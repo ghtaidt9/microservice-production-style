@@ -9,7 +9,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://discovery-service:8761/eureka}
 management:
   tracing:
     enabled: true

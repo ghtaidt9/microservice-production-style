@@ -20,9 +20,20 @@ spec:
             - containerPort: 8086
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka:9092
+              valueFrom:
+                configMapKeyRef:
+                  name: inventory-service-config
+                  key: KAFKA_BOOTSTRAP
             - name: EUREKA_URL
-              value: "http://discovery-service:8761/eureka/"
+              valueFrom:
+                configMapKeyRef:
+                  name: inventory-service-config
+                  key: EUREKA_URL
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: inventory-service-config
+                  key: DB_URL
             - name: POD_NAME
               valueFrom:
                 fieldRef:

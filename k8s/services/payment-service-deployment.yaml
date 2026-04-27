@@ -20,9 +20,50 @@ spec:
             - containerPort: 8084
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka:9092
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: KAFKA_BOOTSTRAP
             - name: EUREKA_URL
-              value: "http://discovery-service:8761/eureka/"
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: EUREKA_URL
+            - name: PAYMENT_RESULTS_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: PAYMENT_RESULTS_TOPIC
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: REDIS_PORT
+            - name: AWS_SQS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: AWS_SQS_ENDPOINT
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: AWS_REGION
+            - name: SQS_PAYMENT_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: SQS_PAYMENT_QUEUE
+            - name: SQS_PAYMENT_DLQ
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: SQS_PAYMENT_DLQ
             - name: POD_NAME
               valueFrom:
                 fieldRef:

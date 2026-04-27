@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-config
+data:
+  DB_URL: jdbc:p6spy:mysql://product-mysql:3306/product_db
+  EUREKA_URL: http://discovery-service:8761/eureka/
+  KAFKA_BOOTSTRAP: kafka:9092
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"

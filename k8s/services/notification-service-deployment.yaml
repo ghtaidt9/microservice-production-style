@@ -20,9 +20,30 @@ spec:
             - containerPort: 8085
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka:9092
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: KAFKA_BOOTSTRAP
             - name: EUREKA_URL
-              value: "http://discovery-service:8761/eureka/"
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: EUREKA_URL
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: AWS_REGION
+            - name: AWS_SNS_TOPIC_ARN
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: AWS_SNS_TOPIC_ARN
+            - name: AWS_SNS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: AWS_SNS_ENDPOINT
             - name: POD_NAME
               valueFrom:
                 fieldRef:

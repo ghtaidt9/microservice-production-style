@@ -20,9 +20,40 @@ spec:
             - containerPort: 8083
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka:9092
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: KAFKA_BOOTSTRAP
             - name: EUREKA_URL
-              value: "http://discovery-service:8761/eureka/"
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: EUREKA_URL
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: DB_URL
+            - name: AWS_SQS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: AWS_SQS_ENDPOINT
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: AWS_REGION
+            - name: SQS_PAYMENT_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: SQS_PAYMENT_QUEUE
+            - name: SQS_PAYMENT_DLQ
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: SQS_PAYMENT_DLQ
             - name: POD_NAME
               valueFrom:
                 fieldRef:
