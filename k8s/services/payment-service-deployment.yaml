@@ -64,6 +64,11 @@ spec:
                 configMapKeyRef:
                   name: payment-service-config
                   key: SQS_PAYMENT_DLQ
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
             - name: POD_NAME
               valueFrom:
                 fieldRef:

@@ -13,7 +13,7 @@ spring:
       region: ${AWS_REGION:us-east-1}
       sns:
         topic-arn: ${AWS_SNS_TOPIC_ARN:arn:aws:sns:us-east-1:000000000000:ecommerce-notifications}
-        endpoint: ${AWS_SNS_ENDPOINT:http://localhost:4566}
+        endpoint: ${AWS_SNS_ENDPOINT:http://localstack:4566}
       credentials:
         access-key: test
         secret-key: test

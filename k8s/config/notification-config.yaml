@@ -7,4 +7,5 @@ data:
   KAFKA_BOOTSTRAP: kafka:9092
   AWS_REGION: us-east-1
   AWS_SNS_TOPIC_ARN: arn:aws:sns:us-east-1:000000000000:ecommerce-notifications
-  AWS_SNS_ENDPOINT: http://localhost:4566
+  AWS_SNS_ENDPOINT: http://localstack:4566
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces

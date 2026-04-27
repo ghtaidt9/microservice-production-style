@@ -8,3 +8,4 @@ data:
   KAFKA_BOOTSTRAP: kafka:9092
   REDIS_HOST: redis
   REDIS_PORT: "6379"
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces

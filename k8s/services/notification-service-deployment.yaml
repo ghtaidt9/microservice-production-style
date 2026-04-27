@@ -44,6 +44,11 @@ spec:
                 configMapKeyRef:
                   name: notification-service-config
                   key: AWS_SNS_ENDPOINT
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
             - name: POD_NAME
               valueFrom:
                 fieldRef:

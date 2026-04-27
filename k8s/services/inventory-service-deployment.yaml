@@ -34,6 +34,11 @@ spec:
                 configMapKeyRef:
                   name: inventory-service-config
                   key: DB_URL
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: inventory-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
             - name: POD_NAME
               valueFrom:
                 fieldRef:

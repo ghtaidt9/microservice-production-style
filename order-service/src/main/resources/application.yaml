@@ -19,7 +19,7 @@ spring:
   cloud:
     aws:
       sqs:
-        endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
+        endpoint: ${AWS_SQS_ENDPOINT:http://localstack:4566}
       region:
         static: ${AWS_REGION:us-east-1}
       queue:

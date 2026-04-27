@@ -4,3 +4,4 @@ metadata:
   name: discovery-service-config
 data:
   EUREKA_DEFAULT_ZONE: http://discovery-service:8761/eureka
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces

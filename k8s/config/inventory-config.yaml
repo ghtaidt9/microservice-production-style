@@ -6,3 +6,4 @@ data:
   DB_URL: jdbc:p6spy:mysql://inventory-mysql:3306/inventory_db
   EUREKA_URL: http://discovery-service:8761/eureka/
   KAFKA_BOOTSTRAP: kafka:9092
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces

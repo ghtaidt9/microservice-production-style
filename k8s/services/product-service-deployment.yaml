@@ -44,6 +44,11 @@ spec:
                 configMapKeyRef:
                   name: product-service-config
                   key: REDIS_PORT
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
             - name: POD_NAME
               valueFrom:
                 fieldRef:

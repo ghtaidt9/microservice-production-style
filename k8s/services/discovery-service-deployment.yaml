@@ -24,6 +24,11 @@ spec:
                 configMapKeyRef:
                   name: discovery-service-config
                   key: EUREKA_DEFAULT_ZONE
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: discovery-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
 ---
 apiVersion: v1
 kind: Service
