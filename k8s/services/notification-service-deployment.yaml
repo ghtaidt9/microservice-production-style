@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: notification-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: KAFKA_BOOTSTRAP
+            - name: EUREKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: EUREKA_URL
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: AWS_REGION
+            - name: AWS_SNS_TOPIC_ARN
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: AWS_SNS_TOPIC_ARN
+            - name: AWS_SNS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: AWS_SNS_ENDPOINT
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: notification-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: "notification-service"
+            - name: EUREKA_INSTANCE_ID
+              value: "$(POD_NAME)"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - port: 8085
+      targetPort: 8085

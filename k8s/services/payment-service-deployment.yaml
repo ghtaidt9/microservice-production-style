@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: payment-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8084
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: KAFKA_BOOTSTRAP
+            - name: EUREKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: EUREKA_URL
+            - name: PAYMENT_RESULTS_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: PAYMENT_RESULTS_TOPIC
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: REDIS_PORT
+            - name: AWS_SQS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: AWS_SQS_ENDPOINT
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: AWS_REGION
+            - name: SQS_PAYMENT_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: SQS_PAYMENT_QUEUE
+            - name: SQS_PAYMENT_DLQ
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: SQS_PAYMENT_DLQ
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: payment-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: "payment-service"
+            - name: EUREKA_INSTANCE_ID
+              value: "$(POD_NAME)"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+spec:
+  selector:
+    app: payment-service
+  ports:
+    - port: 8084
+      targetPort: 8084

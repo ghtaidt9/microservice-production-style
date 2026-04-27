@@ -4,9 +4,9 @@ spring:
   application:
     name: payment-service
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     topic:
-      paymentResults: payment-results
+      paymentResults: ${PAYMENT_RESULTS_TOPIC:payment-results}
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -17,24 +17,28 @@ spring:
       spring.json.value.default.type: com.taidt9.PaymentResultEvent
       spring.json.trusted.packages: "com.taidt9"
   redis:
-    host: redis
-    port: 6379
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
   cloud:
     aws:
       sqs:
-        endpoint: http://localhost:4566
+        endpoint: ${AWS_SQS_ENDPOINT:http://localstack:4566}
       region:
-        static: us-east-1
+        static: ${AWS_REGION:us-east-1}
       queue:
-        paymentRequests: ${spring.application.name}-requests
-        paymentDlq: ${spring.application.name}-requests-dlq
+        paymentRequests: ${SQS_PAYMENT_QUEUE:${spring.application.name}-requests}
+        paymentDlq: ${SQS_PAYMENT_DLQ:${spring.application.name}-requests-dlq}
       credentials:
         access-key: test
         secret-key: test
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_URL:http://discovery-service:8761/eureka/}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:payment-service}
+    prefer-ip-address: false
+    instance-id: ${EUREKA_INSTANCE_ID:payment-service}
 management:
   tracing:
     enabled: true

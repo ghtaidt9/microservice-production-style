@@ -4,23 +4,27 @@ spring:
   application:
     name: notification-service
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     consumer:
       group-id: order-service-group
       auto-offset-reset: earliest
   cloud:
     aws:
-      region: us-east-1
+      region: ${AWS_REGION:us-east-1}
       sns:
-        topic-arn: arn:aws:sns:us-east-1:000000000000:ecommerce-notifications
-        endpoint: http://localhost:4566
+        topic-arn: ${AWS_SNS_TOPIC_ARN:arn:aws:sns:us-east-1:000000000000:ecommerce-notifications}
+        endpoint: ${AWS_SNS_ENDPOINT:http://localstack:4566}
       credentials:
         access-key: test
         secret-key: test
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_URL:http://discovery-service:8761/eureka/}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:notification-service}
+    prefer-ip-address: false
+    instance-id: ${EUREKA_INSTANCE_ID:notification-service}
 management:
   tracing:
     enabled: true

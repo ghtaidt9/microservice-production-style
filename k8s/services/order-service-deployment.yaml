@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: order-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: KAFKA_BOOTSTRAP
+            - name: EUREKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: EUREKA_URL
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: DB_URL
+            - name: AWS_SQS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: AWS_SQS_ENDPOINT
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: AWS_REGION
+            - name: SQS_PAYMENT_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: SQS_PAYMENT_QUEUE
+            - name: SQS_PAYMENT_DLQ
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: SQS_PAYMENT_DLQ
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: "order-service"
+            - name: EUREKA_INSTANCE_ID
+              value: "$(POD_NAME)"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: 8083
+      targetPort: 8083

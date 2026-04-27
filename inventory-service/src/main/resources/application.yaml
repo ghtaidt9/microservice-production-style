@@ -5,15 +5,15 @@ spring:
     name: inventory-service
   datasource:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-    url: jdbc:p6spy:mysql://inventory-mysql:3306/inventory_db
+    url: ${DB_URL:jdbc:p6spy:mysql://inventory-mysql:3306/inventory_db}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
-  Kafka:
-    bootstrap-servers: kafka:9092
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     consumer:
       group-id: inventory-group
       auto-offset-reset: earliest
@@ -23,7 +23,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_URL:http://discovery-service:8761/eureka/}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:inventory-service}
+    prefer-ip-address: false
+    instance-id: ${EUREKA_INSTANCE_ID:inventory-service}
 management:
   tracing:
     enabled: true

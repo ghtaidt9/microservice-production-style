@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product-service
+          image: product-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          env:
+            - name: EUREKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: EUREKA_URL
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: DB_URL
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: KAFKA_BOOTSTRAP
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: REDIS_PORT
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: product-service-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: "product-service"
+            - name: EUREKA_INSTANCE_ID
+              value: "$(POD_NAME)"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product-service
+  ports:
+    - port: 8082
+      targetPort: 8082

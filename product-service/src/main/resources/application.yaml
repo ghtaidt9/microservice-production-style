@@ -5,12 +5,12 @@ spring:
     name: product-service
   data:
     redis:
-      host: redis
-      port: 6379
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
   cache:
     type: redis
   datasource:
-    url: jdbc:p6spy:mysql://product-mysql:3306/product_db
+    url: ${DB_URL:jdbc:p6spy:mysql://product-mysql:3306/product_db}
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
@@ -22,7 +22,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: ${EUREKA_URL:http://discovery-service:8761/eureka/}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:product-service}
+    prefer-ip-address: false
+    instance-id: ${EUREKA_INSTANCE_ID:product-service}
 management:
   tracing:
     enabled: true
