@@ -59,4 +59,4 @@ jobs:
           kubectl set image deployment/api-gateway \
             api-gateway=ghcr.io/${{ secrets.GHCR_USERNAME }}/api-gateway:latest
 
-          kubectl rollout status deployment/api-gateway
+          # kubectl rollout status deployment/api-gateway
